@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Next Story 是面向中文写作者的 Windows 桌面剧本写作软件。在写作空间里亲手写，AI 面板随时陪你想；故事的判断权始终在你手里。">
+  <title>Next Story — 故事由你写，陪你一起想。</title>
+  <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg">
+  <style>
+    :root {
+      --paper: #faf9f6; --wash: #f0efeb; --ink: #202020;
+      --gray-2: #55544f; --gray-3: #72716b; --gray-4: #aaa8a0;
+      --line: rgba(0,0,0,.08); --night: #0a0a0a;
+      --accent: #a83d32; --accent-hover: #872c24; --accent-soft: #f5e9e5; --accent-line: #d9aaa2;
+      --body-size: 18px; --chapter-size: 36px; --hero-size: 60px;
+      --serif: Georgia, "Source Han Serif SC", "Noto Serif SC", SimSun, serif;
+      --sans: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+      --mono: Consolas, "Courier New", monospace;
+      font-family: var(--sans); font-size: var(--body-size); font-weight: 400;
+      line-height: 1.75; color: var(--ink); background: var(--paper);
+      font-synthesis: none; -webkit-font-smoothing: antialiased;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body, h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3, strong { font-weight: 600; }
+    a { color: inherit; text-underline-offset: 6px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+    img, svg { display: block; max-width: 100%; }
+    .wrap { width: min(1160px, calc(100% - 80px)); margin-inline: auto; }
+    .skip { position: absolute; left: 16px; top: -100px; z-index: 5; background: var(--paper); padding: 12px; }
+    .skip:focus { top: 16px; }
+    .header { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; gap: 12px; align-items: center; text-decoration: none; font-weight: 600; white-space: nowrap; }
+    .brand img { width: 36px; height: 36px; }
+    .nav { display: flex; align-items: center; gap: 32px; }
+    .nav a { position: relative; text-decoration: none; padding-block: 10px; }
+    .nav a:hover { color: var(--accent); }
+    .nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 7px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left center; transition: transform .2s cubic-bezier(.19,1,.22,1); }
+    .nav a:hover::after, .nav-download::after { transform: scaleX(1); }
+    .nav-download { border-bottom: 1px solid var(--ink); }
+    .nav a.nav-download::after { bottom: -1px; transform: scaleX(0); }
+    .nav a.nav-download:hover::after { transform: scaleX(1); }
+    .eyebrow { font-family: var(--mono); color: var(--gray-3); font-size: var(--body-size); font-weight: 400; }
+    .index { color: var(--accent); margin-right: 18px; }
+    h1, h2 { font-family: var(--serif); letter-spacing: normal; }
+    h1 { font-size: var(--hero-size); line-height: 1.15; }
+    h2 { font-size: var(--chapter-size); line-height: 1.25; }
+    h3 { font-size: var(--body-size); line-height: 1.75; }
+    .hero { min-height: 90vh; min-height: 90svh; position: relative; isolation: isolate; display: flex; align-items: center; padding: clamp(64px, 8vh, 104px) 0; overflow: hidden; }
+    .hero > .wrap { width: min(1160px, calc(100% - 80px)); }
+    .hero-copy { position: relative; text-align: center; }
+    .hero-copy > .eyebrow { font-size: clamp(15px, 1.2vw, 18px); letter-spacing: .18em; }
+    .hero-copy > .eyebrow::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 12px; border-radius: 50%; vertical-align: middle; background: var(--accent); }
+    .hero .index { color: var(--gray-3); }
+    .hero h1 { margin-top: 36px; font-size: clamp(72px, calc(5.6vw + 7px), 88px); }
+    .hero .positioning { margin-top: 32px; color: var(--gray-2); font-size: clamp(17px, 1.35vw, 20px); letter-spacing: .15em; }
+    .hero .lead { margin-top: 14px; color: var(--gray-3); font-size: clamp(20px, 1.55vw, 22px); line-height: 1.9; }
+    .title-icon { width: .6em; height: .6em; display: inline-block; vertical-align: .04em; margin-left: .12em; }
+    .punctuation { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(2250px, 220vw); height: auto; z-index: -1; pointer-events: none; color: rgba(0,0,0,.12); }
+    .actions { display: flex; flex-direction: column; align-items: center; gap: 13px; margin-top: 24px; }
+    .hero .actions { gap: 16px; margin-top: 36px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 24px; min-height: 52px; padding: 12px 26px; border-radius: 3px; background: var(--ink); color: white; text-decoration: none; font-weight: 600; transition: transform .2s cubic-bezier(.19,1,.22,1); }
+    .hero .button { min-height: 60px; padding: 16px 32px; font-size: 16px; }
+    .button:hover { background: var(--accent-hover); transform: translateY(-2px); }
+    .button:active { transform: translateY(1px); }
+    .button svg { width: 19px; height: 19px; }
+    .hero .button svg { width: 22px; height: 22px; }
+    .release-note { color: var(--gray-3); }
+    .hero-features { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px; margin-top: 32px; color: var(--gray-3); font-family: var(--mono); font-size: clamp(15px, 1.2vw, 17px); letter-spacing: .06em; }
+    .hero-features .divider { color: var(--accent-line); }
+    .interface-gallery { border-block: 1px solid var(--line); padding-block: 8px; }
+    .interface-gallery > .wrap { max-width: 900px; }
+    .gallery-toggle { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; background: transparent; color: var(--gray-2); font: inherit; cursor: pointer; list-style: none; }
+    .gallery-toggle::-webkit-details-marker { display: none; }
+    .gallery-toggle::after { content: "⌄"; color: var(--gray-3); transition: transform .2s ease; }
+    .interface-gallery details[open] .gallery-toggle::after { transform: rotate(180deg); }
+    .gallery-toggle:hover { color: var(--ink); }
+    .gallery-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .gallery-content { padding: 14px 0 24px; }
+    .interface-gallery details:not([open]) > .gallery-content { display: none; }
+    .gallery-intro { color: var(--gray-3); text-align: center; margin-bottom: 20px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .gallery-item { min-width: 0; display: flex; flex-direction: column; }
+    .gallery-placeholder { min-height: 88px; display: grid; align-content: center; justify-items: center; gap: 2px; padding: 12px; border: 1px solid var(--line); background: var(--wash); color: var(--gray-3); text-align: center; }
+    .gallery-placeholder strong { color: var(--gray-2); font-weight: 400; }
+    .gallery-item figcaption { margin-top: auto; padding-top: 8px; color: var(--ink); }
+    .section-intro { padding-top: 72px; }
+    .section-intro h2 { margin-top: 20px; }
+    .section-intro p:last-child { margin-top: 20px; color: var(--gray-3); }
+    .chapter { min-height: auto; padding-block: 96px; display: flex; align-items: center; border-top: 1px solid var(--line); }
+    .chapter-one, .chapter-three { background-color: var(--paper); }
+    .chapter-two, .chapter-four { background-color: var(--wash); }
+    .chapter-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.15fr); align-items: center; gap: 90px; }
+    .chapter h2 { margin-top: 24px; }
+    .chapter-copy > p:last-child { margin-top: 28px; max-width: 26em; color: var(--gray-2); }
+    .chapter-two .chapter-copy, .chapter-four .chapter-copy { order: 2; }
+    .chapter-two .chapter-art, .chapter-four .chapter-art { order: 1; }
+    .chapter-art { min-width: 0; position: relative; }
+    .chapter-art svg { width: 100%; height: auto; }
+    .art-ink { color: var(--ink); }
+    .art-muted { color: var(--gray-4); }
+    .art-accent { color: var(--accent); }
+    .art-paper { fill: var(--paper); }
+    .art-line { stroke: var(--line); }
+    .chapter-art figcaption { padding-top: 20px; border-top: 1px solid var(--line); margin-top: 22px; color: var(--gray-3); font-family: var(--mono); }
+    .chapter-one .section-intro { padding-top: 0; margin-bottom: 64px; }
+    .chapter-one { display: block; }
+    .chapter-one > .wrap { margin-block: auto; }
+    .quote-art { position: relative; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; }
+    .quote-art svg { position: absolute; inset: 0; height: 100%; }
+    .quote-art p { font-family: var(--serif); font-size: var(--chapter-size); line-height: 1.25; text-align: center; }
+    .chapter-three .chapter-grid { grid-template-columns: 1fr; gap: 48px; }
+    .chapter-three .chapter-copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 90px; align-items: end; }
+    .chapter-three .chapter-copy > .eyebrow { grid-column: 1 / -1; }
+    .chapter-three .chapter-copy > p:last-child { margin-top: 24px; }
+    .chapter-three .chapter-art { width: 100%; }
+    .chain-art { aspect-ratio: 1160 / 480; position: relative; overflow: hidden; }
+    .chain-art svg { position: absolute; inset: 0; height: 100%; overflow: hidden; }
+    .chain-art .chain-mobile { display: none; }
+    .chain-label { position: absolute; font-family: var(--mono); background: var(--paper); padding: 3px 10px; }
+    .chain-label.first { left: 10%; top: 15%; }
+    .chain-label.second { right: 7%; top: 40%; }
+    .chain-label.third { left: 47%; bottom: 8%; }
+    .formats { padding-block: 40px; }
+    .format-row { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 24px; padding-block: 27px; border-top: 1px solid var(--line); }
+    .format-row:last-child { border-bottom: 1px solid var(--line); }
+    .format-word { font-family: var(--serif); font-size: var(--chapter-size); line-height: 1.25; }
+    .format-type { color: var(--gray-3); align-self: center; text-align: right; }
+    .formats-heading { color: var(--accent); font-family: var(--mono); margin-bottom: 30px; }
+    .principle { padding-block: 72px; border-top: 1px solid var(--line); }
+    .principle .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; }
+    .principle p:last-child { color: var(--gray-3); }
+    .download { min-height: auto; background: var(--night); color: #faf9f6; padding-block: 96px 72px; display: flex; align-items: center; }
+    .download .eyebrow { color: #a8a8a8; }
+    .download-title { font-size: var(--hero-size); line-height: 1.15; margin-top: 28px; }
+    .download-top { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+    .download-summary { color: #c5c5c5; max-width: 25em; }
+    .download .actions { align-items: flex-start; }
+    .download .button { background: #faf9f6; color: #0a0a0a; }
+    .download .button:hover { background: var(--accent-soft); }
+    .download .release-note, .system-note { color: #a8a8a8; }
+    .system-note { margin-top: 12px; }
+    .install-note { border-top: 1px solid rgba(255,255,255,.1); display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; margin-top: 88px; padding-top: 32px; }
+    .install-copy { color: #a8a8a8; }
+    .install-copy p + p { margin-top: 16px; }
+    .install-copy strong { color: #faf9f6; }
+    .footer { background: var(--night); color: #a8a8a8; padding-bottom: 36px; }
+    .footer-inner { border-top: 1px solid rgba(255,255,255,.1); padding-top: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
+    .footer p + p { margin-top: 8px; }
+    .download-strip { border-block: 1px solid var(--line); padding-block: 20px; }
+    .download-strip > .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .download-strip .actions { margin: 0; gap: 8px; }
+    .download-strip + .chapter { border-top: 0; padding-top: 84px; }
+    .reading-progress { position: fixed; inset: 0 0 auto; z-index: 20; height: 2px; pointer-events: none; background: transparent; }
+    .reading-progress span { display: block; width: 100%; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left center; }
+    .hero-line { display: inline-block; }
+    .hero-line-mask, .line-mask, .index-mask { display: inline-block; overflow: hidden; vertical-align: bottom; }
+    .hero-line-mask, .line-mask { line-height: inherit; }
+    .hero-line, .line-content, .index-content { display: inline-block; }
+    .line-mask, .index-mask { position: relative; }
+    .motion-enabled .hero-line-mask.motion-source .hero-line,
+    .motion-enabled .line-mask.motion-source .line-content,
+    .motion-enabled .index-mask.motion-source .index-content { opacity: 0; transform: translateY(110%); }
+    .motion-enabled .hero-line-mask.motion-play .hero-line,
+    .motion-enabled .line-mask.motion-play .line-content { animation: lift-line .95s cubic-bezier(.19,1,.22,1) var(--delay, 0s) both; }
+    .motion-enabled .index-mask.motion-play .index-content { animation: lift-index .8s cubic-bezier(.22,1.36,.4,1) var(--delay, 0s) both; }
+    .motion-enabled .motion-fade.motion-source { opacity: 0; transform: translateY(16px); }
+    .motion-enabled .motion-fade.motion-play { animation: arrive .6s cubic-bezier(.19,1,.22,1) var(--delay, 0s) both; }
+    .motion-enabled .scroll-active { will-change: transform; }
+    .motion-enabled .hero-copy { transform: translate3d(0, var(--parallax-y, 0px), 0); }
+    .motion-enabled .punctuation { transform: translate3d(-50%, calc(-50% + var(--parallax-y, 0px)), 0); }
+    .motion-enabled .hero h1 { transform: translate3d(0, var(--heading-y, 0px), 0); }
+    .motion-enabled .punctuation.motion-source { opacity: 0; }
+    .motion-enabled .punctuation.motion-play { animation: punctuation-enter 1.1s cubic-bezier(.19,1,.22,1) var(--delay, 0s) both; }
+    .motion-enabled .download.motion-source { opacity: 0; transform: translateY(6%); }
+    .motion-enabled .download.motion-play { animation: section-rise .95s cubic-bezier(.19,1,.22,1) both; }
+    .motion-enabled .interface-gallery details[open] .gallery-content { animation: gallery-fade .35s cubic-bezier(.19,1,.22,1) both; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes lift-line { from { opacity: 0; transform: translateY(110%); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes lift-index { 0% { opacity: 0; transform: translateY(110%) scale(.92); } 70% { opacity: 1; transform: translateY(-8%) scale(1.02); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes punctuation-enter { from { opacity: 0; transform: translate3d(-50%, calc(-50% + var(--parallax-y, 0px)), 0) scale(.9); } to { opacity: 1; transform: translate3d(-50%, calc(-50% + var(--parallax-y, 0px)), 0) scale(1); } }
+    @keyframes section-rise { from { opacity: 0; transform: translateY(6%); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes node-pop { 0% { opacity: 0; transform: scale(.2); } 65% { opacity: 1; transform: scale(1.14); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes label-slide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes gallery-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes drift { from { transform: translate(0, 0) rotate(0); } to { transform: translate(8px, -10px) rotate(1.5deg); } }
+    @keyframes draw { from { stroke-dashoffset: var(--length); } to { stroke-dashoffset: 0; } }
+    @keyframes cursor { 0%, 100% { opacity: 1; } 50% { opacity: .18; } }
+    .motion-enabled .punctuation > * { transform-box: fill-box; transform-origin: center; animation: drift 31s ease-in-out infinite alternate; }
+    .motion-enabled .punctuation > :nth-child(2) { animation-duration: 37s; animation-direction: alternate-reverse; }
+    .motion-enabled .punctuation > :nth-child(3) { animation-duration: 25s; }
+    .motion-enabled .punctuation > :nth-child(4) { animation-duration: 40s; animation-direction: alternate-reverse; }
+    .draw-path { stroke-dasharray: var(--length); stroke-dashoffset: 0; }
+    .art-ready .draw-path { stroke-dashoffset: var(--length); }
+    .art-ready .chain-node, .art-ready .chain-label { opacity: 0; }
+    .art-play .draw-path { animation: draw var(--duration, .6s) cubic-bezier(.19,1,.22,1) var(--delay, 0s) both; }
+    .art-play .chain-node { transform-box: fill-box; transform-origin: center; animation: node-pop .7s cubic-bezier(.22,1.36,.4,1) var(--delay) both; }
+    .art-play .chain-label { animation: label-slide .55s cubic-bezier(.19,1,.22,1) var(--delay) both; }
+    .motion-enabled .art-play .paper-cursor { animation: cursor 2s ease-in-out infinite; }
+    .reveal { opacity: 1; transform: none; }
+    .reveal.is-pending { opacity: 0; transform: translate3d(0, calc(16px + var(--parallax-y, 0px)), 0); }
+    .reveal.is-visible { opacity: 1; transform: translate3d(0, var(--parallax-y, 0px), 0); animation: reveal-rise .8s cubic-bezier(.19,1,.22,1) both; }
+    .motion-enabled .chapter-art { transform: translate3d(0, var(--parallax-y, 0px), 0); }
+    @keyframes reveal-rise { from { opacity: 0; transform: translate3d(0, calc(24px + var(--parallax-y, 0px)), 0); } to { opacity: 1; transform: translate3d(0, var(--parallax-y, 0px), 0); } }
+    @media (max-width: 900px) {
+      :root { --body-size: 17px; --chapter-size: 32px; --hero-size: 48px; }
+      .wrap { width: calc(100% - 48px); }
+      .chapter-grid { gap: 40px; }
+      .download-top { gap: 40px; }
+      .install-note { gap: 32px; }
+    }
+    @media (max-width: 700px) {
+      .wrap { width: calc(100% - 32px); }
+      .header { min-height: 76px; gap: 12px; }
+      .brand { gap: 8px; }
+      .brand img { width: 30px; height: 30px; }
+      .nav { gap: 12px; }
+      .nav-features { display: none; }
+      .hero { min-height: 90vh; min-height: 90svh; padding: clamp(56px, 8vh, 80px) 0; }
+      .hero > .wrap { width: calc(100% - 32px); }
+      .hero h1 { margin-top: 28px; font-size: clamp(44px, calc(4.7vw + 28px), 52px); }
+      .punctuation { width: min(2250px, 285vw); opacity: .72; }
+      .hero .positioning { margin-top: 24px; }
+      .hero .lead { margin-top: 10px; }
+      .hero .actions { margin-top: 30px; }
+      .hero-features { gap: 12px; margin-top: 26px; }
+      .title-icon { margin-left: .08em; }
+      .chapter { padding-block: 72px; }
+      .chapter-grid { grid-template-columns: 1fr; gap: 40px; }
+      .chapter-two .chapter-copy, .chapter-four .chapter-copy, .chapter-two .chapter-art, .chapter-four .chapter-art { order: initial; }
+      .chapter-art { width: min(100%, 480px); margin-inline: auto; }
+      .chapter-three .chapter-copy { display: block; }
+      .chapter-three .chapter-grid { gap: 32px; }
+      .chain-art { aspect-ratio: 1 / 1; }
+      .chain-art .chain-desktop { display: none; }
+      .chain-art .chain-mobile { display: block; }
+      .chain-label.first { left: 12%; top: 20%; }
+      .chain-label.second { right: 7%; top: 44%; }
+      .chain-label.third { left: 27%; bottom: 13%; }
+      .chapter-one .section-intro { margin-bottom: 64px; }
+      .chapter h2 { margin-top: 20px; }
+      .chapter-copy > p:last-child { margin-top: 24px; }
+      .principle { padding-block: 44px; }
+      .download { padding-block: 80px 56px; }
+      .download-top, .install-note { grid-template-columns: 1fr; gap: 32px; }
+      .install-note { margin-top: 56px; }
+      .footer-inner { gap: 32px; }
+      .download-strip > .wrap { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .download-strip .actions { align-items: flex-start; }
+      .download-strip + .chapter { padding-top: 64px; }
+      .gallery-grid { grid-template-columns: 1fr; gap: 10px; }
+      .gallery-placeholder { min-height: 68px; }
+      .gallery-content { padding-bottom: 18px; }
+    }
+    @media (max-width: 360px) {
+      .wrap { width: calc(100% - 24px); }
+      .hero > .wrap { width: calc(100% - 24px); }
+      .hero .button { padding-inline: 24px; }
+      .nav-download { max-width: 7em; text-align: right; }
+      .format-row { gap: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      .reveal.is-pending { opacity: 1; transform: none; }
+      .art-ready .draw-path { stroke-dashoffset: 0; }
+      .art-ready .chain-node, .art-ready .chain-label { opacity: 1; transform: none; }
+      .motion-source, .motion-play, .hero-line, .line-content, .index-mask .index { opacity: 1 !important; }
+      .hero-copy, .hero h1, .chapter-art, .motion-fade, .hero-line, .line-content, .index-mask .index, .download { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span></span></div>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="header wrap">
+    <a class="brand" href="#main" aria-label="Next Story 首页"><img src="assets/app-icon.svg" width="36" height="36" alt=""><span>Next Story</span></a>
+    <nav class="nav" aria-label="主导航"><a class="nav-features" href="#features">认识软件</a><a class="nav-download" href="#download">下载 Windows 版 <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <!-- 中文标点作为图形；8% 灰，辅助技术忽略，无额外字体依赖。 -->
+      <svg class="punctuation" viewBox="0 0 1440 560" fill="none" stroke="currentColor" aria-hidden="true">
+        <path d="M250 65H175V195 M1165 265v130h-75" stroke-width="10"/>
+        <path d="M1000 95h130m12 0h130" stroke-width="6"/>
+        <path d="m315 367 32 27" stroke-width="8"/>
+        <circle cx="1130" cy="480" r="29" stroke-width="7"/>
+      </svg>
+      <div class="wrap">
+        <div class="hero-copy">
+          <p class="eyebrow motion-fade">NEXT STORY / 给想写故事的人</p>
+          <h1 id="hero-title"><span class="hero-line-mask"><span class="hero-line">故事由你写，</span></span><br><span class="hero-line-mask"><span class="hero-line">陪你一起想。<img class="title-icon" src="assets/app-icon.svg" width="34" height="34" alt=""></span></span></h1>
+          <p class="positioning motion-fade">辅助剧本创作的陪想软件</p>
+          <p class="lead motion-fade">在写作空间里亲手写，<br>AI 面板随时陪你想。</p>
+          <div class="actions motion-fade"><a class="button" href="https://github.com/irisnb/next-story/releases" aria-describedby="hero-release-note">下载 Windows 版<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></a><span class="release-note" id="hero-release-note">首个安装包即将发布</span></div>
+          <p class="hero-features motion-fade" aria-label="亲手写、随时陪想，故事的判断权始终在你手里"><span>亲手写</span><span class="divider" aria-hidden="true">·</span><span>随时陪你想</span><span class="divider" aria-hidden="true">·</span><span>判断权在你手里</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter chapter-one" id="features" aria-labelledby="writing-title">
+      <div class="wrap">
+        <div class="section-intro reveal"><p class="eyebrow">围绕你的创作</p><h2><span class="line-mask"><span class="line-content">落笔、提问，</span></span><br><span class="line-mask"><span class="line-content">再回到故事。</span></span></h2><p>你亲手创作，AI 陪你想。</p></div>
+        <div class="chapter-grid">
+          <div class="chapter-copy reveal"><p class="eyebrow"><span class="index-mask"><span class="index">01 /</span></span>写作空间</p><h2 id="writing-title"><span class="line-mask"><span class="line-content">每一笔，</span></span><br><span class="line-mask"><span class="line-content">都由你落下</span></span></h2><p>「项目」就是一个文件夹，用文档收纳你的剧本与创作笔记。在写作空间里亲手写、亲手改，什么进入故事，由你决定。</p></div>
+          <figure class="chapter-art reveal" aria-label="稿纸与落笔的概念插图，非软件界面">
+            <svg viewBox="0 0 520 500" fill="none" aria-hidden="true"><path d="M84 42h280l72 72v334H84Z" class="art-paper"/><path d="M84 42h280l72 72v334H84Z M364 42v72h72" stroke="currentColor" class="art-muted" stroke-width="1"/><path d="M125 171h270M125 214h270M125 257h270M125 300h270M125 343h270M125 386h270" class="art-line"/><path d="M125 153h89 M125 198h169 M125 241h130 M125 284h187" stroke="currentColor" class="art-ink" stroke-width="2"/><path d="M331 274v20" class="art-accent" stroke="currentColor" stroke-width="3"/><path d="M60 42H36v406h24" class="art-line"/></svg>
+            <figcaption>每一笔，都由你落下</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter chapter-two" aria-labelledby="thinking-title">
+      <div class="wrap chapter-grid">
+        <div class="chapter-copy reveal"><p class="eyebrow"><span class="index-mask"><span class="index">02 /</span></span>AI 陪想</p><h2 id="thinking-title"><span class="line-mask"><span class="line-content">随时问，</span></span><br><span class="line-mask"><span class="line-content">也可以指着一段问</span></span></h2><p>在 AI 面板直接提问，或选中一段文字，点击旁边的「AI」发起讨论。听听它的观察与问题，看看不同可能；AI 不替你写。</p></div>
+        <figure class="chapter-art reveal" aria-label="括号围绕文字的陪想概念插图，非软件界面">
+          <div class="quote-art"><svg viewBox="0 0 520 520" fill="none" aria-hidden="true"><path d="M135 85H65v195 M385 435h70V240" stroke="currentColor" class="art-ink" stroke-width="2"/><path d="M163 310h194" stroke="currentColor" class="art-accent" stroke-width="2"/><path d="M90 380h50m-25-25v50M380 140h50m-25-25v50" class="art-line"/></svg><p>AI 不替你写。</p></div>
+          <figcaption>观察 / 问题 / 可能性</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <aside class="download-strip" aria-label="下载 Next Story"><div class="wrap"><p>从这里，开始你的故事。</p><div class="actions"><a class="button" href="https://github.com/irisnb/next-story/releases" aria-describedby="middle-release-note">下载 Windows 版<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></a><span class="release-note" id="middle-release-note">首个安装包即将发布</span></div></div></aside>
+
+    <section class="chapter chapter-three" aria-labelledby="making-title">
+      <div class="wrap chapter-grid">
+        <div class="chapter-copy reveal"><p class="eyebrow"><span class="index-mask"><span class="index">03 /</span></span>制作模块</p><h2 id="making-title"><span class="line-mask"><span class="line-content">陪想的方式，</span></span><br><span class="line-mask"><span class="line-content">也可以琢磨</span></span></h2><p>在独立的制作模块里，用思维链路组织陪想的要求与姿态，试问、比较，再选择启用哪个版本。制作时的讨论与日常陪想分开。</p></div>
+        <figure class="chapter-art reveal" aria-label="要求与姿态、试问、版本选择的概念连线，非软件界面">
+          <div class="chain-art"><svg class="chain-desktop" viewBox="0 0 1160 480" fill="none" aria-hidden="true"><path d="M90 90h650c210 0 310 35 310 135s-130 80-310 80H310c-230 0-230 125 0 125h460" class="art-ink" stroke="currentColor" stroke-width="1.5"/><path d="M670 90c-150 0-210 90-210 215" class="art-line" stroke-dasharray="4 7"/><circle cx="90" cy="90" r="7" class="art-paper art-ink" stroke="currentColor"/><circle cx="1050" cy="225" r="7" class="art-paper art-ink" stroke="currentColor"/><circle cx="770" cy="430" r="8" class="art-accent" fill="currentColor"/></svg><svg class="chain-mobile" viewBox="0 0 520 520" fill="none" aria-hidden="true"><path d="M90 110h200c110 0 145 55 145 130s-45 90-135 90H170c-100 0-110 100 0 100h130" class="art-ink" stroke="currentColor" stroke-width="1"/><path d="M290 110c-50 0-70 60-70 125v95" class="art-line" stroke-dasharray="4 7"/><circle cx="90" cy="110" r="6" class="art-paper art-ink" stroke="currentColor"/><circle cx="435" cy="240" r="6" class="art-paper art-ink" stroke="currentColor"/><circle cx="300" cy="430" r="7" class="art-accent" fill="currentColor"/></svg><span class="chain-label first">要求与姿态</span><span class="chain-label second">试问、比较</span><span class="chain-label third">选择启用哪个版本</span></div>
+          <figcaption>制作时的讨论与日常陪想分开。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="chapter chapter-four" aria-labelledby="formats-title">
+      <div class="wrap chapter-grid">
+        <div class="chapter-copy reveal"><p class="eyebrow"><span class="index-mask"><span class="index">04 /</span></span>导入与导出</p><h2 id="formats-title"><span class="line-mask"><span class="line-content">带着已有的文字，</span></span><br><span class="line-mask"><span class="line-content">接着写</span></span></h2><p>导入 Word、Markdown 或 Final Draft（.fdx）文档，继续创作；需要交稿或留存时，可导出 Word、PDF 或 Markdown。</p></div>
+        <figure class="chapter-art reveal" aria-label="文档格式排版图：Word、Markdown 可导入导出，FDX 可导入，PDF 可导出">
+          <div class="formats"><p class="formats-heading">导入与导出</p><div class="format-row"><span class="format-word">Word</span><span class="format-type">导入 / 导出</span></div><div class="format-row"><span class="format-word">Markdown</span><span class="format-type">导入 / 导出</span></div><div class="format-row"><span class="format-word">.fdx</span><span class="format-type">导入</span></div><div class="format-row"><span class="format-word">PDF</span><span class="format-type">导出</span></div></div>
+          <figcaption>带着已有的文字，接着写</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <aside class="principle"><div class="wrap reveal"><p>故事的判断权，始终在你手里。</p><p>AI 的回应是临时材料，由你决定是否采用。</p></div></aside>
+    <section class="interface-gallery" aria-label="软件界面画廊">
+      <div class="wrap">
+        <details>
+          <summary class="gallery-toggle">看看软件界面</summary>
+          <div class="gallery-content">
+            <p class="gallery-intro">写作与陪想，并列在眼前。</p>
+            <div class="gallery-grid">
+              <figure class="gallery-item">
+                <img src="assets/shot-welcome.png" alt="欢迎页：新建项目、打开项目" loading="lazy" />
+                <figcaption>从这里，进入你的项目。</figcaption>
+              </figure>
+              <figure class="gallery-item">
+                <img src="assets/shot-writing.png" alt="写作空间与 AI 面板：左侧内容树、中部稿纸编辑区、右侧陪想讨论" loading="lazy" />
+                <figcaption>亲手写作，随时陪想。</figcaption>
+              </figure>
+              <figure class="gallery-item">
+                <img src="assets/shot-making.png" alt="制作模块：左侧链路库、右侧版本管理与提示词组装" loading="lazy" />
+                <figcaption>梳理陪想的要求与姿态。</figcaption>
+              </figure>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="download" id="download" aria-labelledby="download-title">
+      <div class="wrap">
+        <div class="download-top reveal">
+          <div><p class="eyebrow">在自己的电脑上，开始</p><h2 class="download-title" id="download-title"><span class="line-mask"><span class="line-content">留一个</span></span><br><span class="line-mask"><span class="line-content">写故事的地方。</span></span></h2></div>
+          <div><p class="download-summary">面向中文写作者的 Windows 桌面剧本写作软件。想写的时候，打开你的项目。</p><div class="actions"><a class="button" href="https://github.com/irisnb/next-story/releases" aria-describedby="download-release-note">下载 Windows 版<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></a><span class="release-note" id="download-release-note">首个安装包即将发布</span></div><p class="system-note">下载入口将前往 GitHub 发布页</p></div>
+        </div>
+        <aside class="install-note reveal" aria-labelledby="install-title"><h3 id="install-title">关于首次运行的 Windows 提示</h3><div class="install-copy"><p>首次运行时，Windows SmartScreen 可能提示「未知发布者」或「Windows 已保护你的电脑」，这是预期情况。确认安装包来自本页链接的发布页后，点击<strong>「更多信息」→「仍要运行」</strong>即可继续。</p><p>无需关闭 Windows 的安全保护。</p></div></aside>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><div><p>© 2026 irisnb · 版权所有（保留所有权利；可下载安装使用）</p><p>本软件按现状提供，不附担保</p></div></div></footer>
+  <script>
+    (() => {
+      const preference = matchMedia('(prefers-reduced-motion: reduce)');
+      const root = document.documentElement;
+      const hero = document.querySelector('.hero');
+      const copy = document.querySelector('.hero-copy');
+      const title = document.querySelector('.hero h1');
+      const punctuation = document.querySelector('.punctuation');
+      const progress = document.querySelector('.reading-progress span');
+      const arts = [...document.querySelectorAll('.chapter-art')];
+      const observers = [];
+      const cleanups = [];
+      let enabled = false, frame = 0, dirty = true;
+      let targetY = scrollY, currentY = scrollY, currentProgress = 0;
+      let heroTop = 0, heroHeight = 1, maxScroll = 1, viewport = innerHeight, mobile = false;
+      let artPositions = [];
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const measure = () => {
+        viewport = innerHeight;
+        mobile = innerWidth <= 700;
+        heroTop = hero.getBoundingClientRect().top + scrollY;
+        heroHeight = hero.offsetHeight;
+        maxScroll = Math.max(1, root.scrollHeight - viewport);
+        artPositions = arts.map(element => {
+          const offset = parseFloat(element.style.getPropertyValue('--parallax-y')) || 0;
+          const rect = element.getBoundingClientRect();
+          return rect.top + scrollY - offset + rect.height / 2;
+        });
+        dirty = false;
+      };
+      // One shared frame loop; scroll listeners only record the latest target.
+      const tick = () => {
+        frame = 0;
+        if (!enabled || document.hidden) return;
+        if (dirty) measure();
+        currentY += (targetY - currentY) * .1;
+        if (Math.abs(targetY - currentY) < .02) currentY = targetY;
+        const goal = clamp(targetY / maxScroll, 0, 1);
+        currentProgress += (goal - currentProgress) * .1;
+        if (Math.abs(goal - currentProgress) < .0001) currentProgress = goal;
+        progress.style.transform = `scaleX(${currentProgress})`;
+        const travel = mobile ? 0 : clamp(currentY - heroTop, 0, heroHeight);
+        copy.style.setProperty('--parallax-y', `${-travel * .2}px`);
+        title.style.setProperty('--heading-y', `${-travel * .2}px`);
+        punctuation.style.setProperty('--parallax-y', `${-travel * .6}px`);
+        [copy, title, punctuation].forEach(element => element.classList.toggle('scroll-active', !mobile && currentY < heroTop + heroHeight));
+        arts.forEach((element, index) => {
+          const distance = artPositions[index] - (currentY + viewport / 2);
+          const amount = mobile ? 0 : clamp(distance * .035, -20, 20);
+          element.style.setProperty('--parallax-y', `${amount}px`);
+          element.classList.toggle('scroll-active', !mobile && Math.abs(distance) < viewport);
+        });
+        progress.classList.toggle('scroll-active', Math.abs(goal - currentProgress) > .0001);
+        if (currentY !== targetY || currentProgress !== goal) wake();
+      };
+      const wake = () => { if (enabled && !document.hidden && !frame) frame = requestAnimationFrame(tick); };
+      const onScroll = () => { targetY = scrollY; wake(); };
+      const onResize = () => { dirty = true; targetY = scrollY; wake(); };
+      const play = element => {
+        if (!element.classList.contains('motion-source')) return;
+        element.classList.add('motion-play');
+      };
+      const prepare = (element, delay = 0) => {
+        element.style.setProperty('--delay', `${delay}s`);
+        element.classList.add('motion-source');
+        const end = event => {
+          if (event.target !== element && !['lift-line', 'lift-index'].includes(event.animationName)) return;
+          element.classList.remove('motion-source', 'motion-play');
+          element.removeEventListener('animationend', end);
+        };
+        element.addEventListener('animationend', end);
+        cleanups.push(() => element.removeEventListener('animationend', end));
+      };
+      const finish = () => {
+        enabled = false;
+        cancelAnimationFrame(frame); frame = 0;
+        observers.splice(0).forEach(observer => observer.disconnect());
+        cleanups.splice(0).forEach(cleanup => cleanup());
+        root.classList.remove('motion-enabled');
+        document.querySelectorAll('.motion-source,.motion-play,.is-pending,.is-visible,.art-ready,.art-play,.scroll-active').forEach(element => {
+          element.classList.remove('motion-source','motion-play','is-pending','is-visible','art-ready','art-play','scroll-active');
+        });
+        [copy, title, punctuation, ...arts].forEach(element => {
+          element.style.removeProperty('--parallax-y'); element.style.removeProperty('--heading-y');
+        });
+        progress.style.removeProperty('transform');
+      };
+      const start = () => {
+        if (preference.matches || enabled || !('IntersectionObserver' in window)) return;
+        try {
+          enabled = true; dirty = true; targetY = currentY = scrollY;
+          root.classList.add('motion-enabled');
+          document.querySelectorAll('.index-mask').forEach(mask => {
+            if (mask.querySelector('.index-content')) return;
+            const content = document.createElement('span'); content.className = 'index-content';
+            content.append(...mask.childNodes); mask.append(content);
+          });
+          const sequence = [...copy.querySelectorAll(':scope > .eyebrow,.hero-line-mask,:scope > .positioning,:scope > .lead,:scope > .actions,:scope > .hero-features')];
+          sequence.forEach((element, index) => { prepare(element, index * .12); play(element); });
+          prepare(punctuation, .18); play(punctuation);
+          const entrance = new IntersectionObserver(entries => {
+            entries.forEach(({ target, isIntersecting }) => {
+              if (!isIntersecting) return;
+              if (target.classList.contains('reveal')) target.classList.replace('is-pending','is-visible');
+              target.querySelectorAll('.line-mask,.index-mask,.motion-fade').forEach(play);
+              if (target.matches('.line-mask,.index-mask,.motion-fade')) play(target);
+              entrance.unobserve(target);
+            });
+          }, { threshold: 0, rootMargin: '0px 0px -5% 0px' });
+          observers.push(entrance);
+          document.querySelectorAll('.reveal').forEach(element => {
+            element.querySelectorAll('.line-mask').forEach((mask, index) => prepare(mask, .1 + index * .12));
+            element.querySelectorAll('.index-mask').forEach(mask => prepare(mask));
+            if (element.classList.contains('download-top')) {
+              const action = element.querySelector('.actions');
+              action.classList.add('motion-fade'); prepare(action, .48);
+            }
+            element.classList.add('is-pending'); entrance.observe(element);
+          });
+          const paper = document.querySelector('.chapter-one .chapter-art');
+          const chain = document.querySelector('.chain-art');
+          const pathMotion = (path, delay, duration) => {
+            path.classList.add('draw-path');
+            path.style.setProperty('--length', path.getTotalLength());
+            path.style.setProperty('--delay', `${delay}s`);
+            path.style.setProperty('--duration', `${duration}s`);
+          };
+          // Preserve the original compound strokes and their exact rasterization.
+          paper.querySelectorAll('path').forEach(path => {
+            if (/^M125 /.test(path.getAttribute('d'))) pathMotion(path, 0, .9);
+          });
+          paper.querySelector('.art-accent').classList.add('paper-cursor');
+          chain.querySelectorAll('svg').forEach(svg => {
+            pathMotion(svg.querySelector('path'), 0, 1);
+            svg.querySelectorAll('circle').forEach((node, index) => {
+              node.classList.add('chain-node'); node.style.setProperty('--delay', `${1 + index * .14}s`);
+            });
+          });
+          chain.querySelectorAll('.chain-label').forEach((label, index) => label.style.setProperty('--delay', `${1.1 + index * .14}s`));
+          const drawing = new IntersectionObserver(entries => entries.forEach(({target,isIntersecting}) => {
+            if (!isIntersecting) return;
+            target.classList.replace('art-ready','art-play'); drawing.unobserve(target);
+          }), { threshold: .1 });
+          observers.push(drawing);
+          [paper, chain].forEach(element => { element.classList.add('art-ready'); drawing.observe(element); });
+          addEventListener('scroll', onScroll, { passive: true });
+          addEventListener('resize', onResize, { passive: true });
+          cleanups.push(() => removeEventListener('scroll', onScroll), () => removeEventListener('resize', onResize));
+          if ('ResizeObserver' in window) {
+            const sizeObserver = new ResizeObserver(onResize);
+            sizeObserver.observe(document.body); observers.push(sizeObserver);
+          }
+          wake();
+        } catch (error) { finish(); console.error('Motion setup failed; all content remains visible.', error); }
+      };
+      preference.addEventListener('change', () => { finish(); start(); });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { cancelAnimationFrame(frame); frame = 0; }
+        else { targetY = scrollY; dirty = true; wake(); }
+      });
+      addEventListener('pagehide', finish);
+      addEventListener('pageshow', start);
+      start();
+    })();
+  </script>
+</body>
+</html>
