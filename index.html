@@ -80,7 +80,7 @@
     .gallery-content { padding: 14px 0 24px; }
     .interface-gallery details:not([open]) > .gallery-content { display: none; }
     .gallery-intro { color: var(--gray-3); text-align: center; margin-bottom: 20px; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .gallery-item { min-width: 0; display: flex; flex-direction: column; }
     .gallery-placeholder { min-height: 88px; display: grid; align-content: center; justify-items: center; gap: 2px; padding: 12px; border: 1px solid var(--line); background: var(--wash); color: var(--gray-3); text-align: center; }
     .gallery-placeholder strong { color: var(--gray-2); font-weight: 400; }
@@ -148,10 +148,42 @@
     .footer { background: var(--night); color: #a8a8a8; padding-bottom: 36px; }
     .footer-inner { border-top: 1px solid rgba(255,255,255,.1); padding-top: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
     .footer p + p { margin-top: 8px; }
-    .download-strip { border-block: 1px solid var(--line); padding-block: 20px; }
-    .download-strip > .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .download-strip .actions { margin: 0; gap: 8px; }
-    .download-strip + .chapter { border-top: 0; padding-top: 84px; }
+    .nav-github { border-bottom: 1px solid var(--ink); white-space: nowrap; }
+    .nav a.nav-github::after { bottom: -1px; }
+    .footer-github { font-family: var(--mono); font-size: 14px; align-self: flex-start; padding-block: 6px; text-decoration-thickness: 1px; }
+    .footer-github:hover { color: #faf9f6; }
+    .developers { padding-block: 8px; border-bottom: 1px solid var(--line); background: var(--paper); }
+    .developers-content { padding-block: 48px 56px; }
+    .developers details:not([open]) > .developers-content { display: none; }
+    .developers details[open] > .gallery-toggle::after { transform: rotate(180deg); }
+    .motion-enabled .developers details[open] > .developers-content { animation: gallery-fade .35s cubic-bezier(.19,1,.22,1) both; }
+    .developers-heading { margin-bottom: 40px; }
+    .developers-heading .eyebrow { margin-bottom: 20px; }
+    .developer-row { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.7fr); gap: 64px; padding-block: 32px; border-top: 1px solid var(--line); }
+    .developer-label .eyebrow { margin-bottom: 12px; color: var(--accent); }
+    .developer-label h3 { font-family: var(--serif); font-size: 24px; line-height: 1.5; }
+    .developer-body { min-width: 0; color: var(--gray-2); }
+    .developer-body p + p { margin-top: 18px; }
+    .developer-body strong { color: var(--ink); }
+    .developer-body code { font-family: var(--mono); font-size: .94em; overflow-wrap: anywhere; }
+    .developer-evidence { padding-top: 20px; border-top: 1px solid var(--line); color: var(--gray-3); }
+    .developers-intro { max-width: 100%; margin-top: 24px; color: var(--gray-2); white-space: nowrap; overflow-x: auto; }
+    .developer-body ul { margin: 18px 0; padding-left: 1.25em; }
+    .developer-body li + li { margin-top: 10px; }
+    .developer-body h4 { margin: 28px 0 18px; color: var(--ink); font-size: 18px; }
+    .hero-contact { margin-top: 16px; font-size: 13px; color: var(--gray-3); }
+    .hero-contact a { text-underline-offset: 4px; overflow-wrap: anywhere; }
+    @media (max-width: 700px) {
+      .header .nav { display: grid; justify-items: end; gap: 0; }
+      .header .nav a { padding-block: 3px; font-size: 14px; }
+      .header .nav-download { max-width: none; white-space: nowrap; }
+      .developers-content { padding-block: 28px 32px; }
+      .developers-heading { margin-bottom: 28px; }
+      .developer-row { grid-template-columns: 1fr; gap: 20px; padding-block: 28px; }
+      .developer-label { display: flex; align-items: baseline; gap: 18px; }
+      .developer-label .eyebrow { margin-bottom: 0; }
+      .developer-label h3 { font-size: 22px; }
+    }
     .reading-progress { position: fixed; inset: 0 0 auto; z-index: 20; height: 2px; pointer-events: none; background: transparent; }
     .reading-progress span { display: block; width: 100%; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left center; }
     .hero-line { display: inline-block; }
@@ -246,9 +278,6 @@
       .download-top, .install-note { grid-template-columns: 1fr; gap: 32px; }
       .install-note { margin-top: 56px; }
       .footer-inner { gap: 32px; }
-      .download-strip > .wrap { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .download-strip .actions { align-items: flex-start; }
-      .download-strip + .chapter { padding-top: 64px; }
       .gallery-grid { grid-template-columns: 1fr; gap: 10px; }
       .gallery-placeholder { min-height: 68px; }
       .gallery-content { padding-bottom: 18px; }
@@ -275,7 +304,7 @@
   <a class="skip" href="#main">跳到正文</a>
   <header class="header wrap">
     <a class="brand" href="#main" aria-label="Next Story 首页"><img src="assets/app-icon.svg" width="36" height="36" alt=""><span>Next Story</span></a>
-    <nav class="nav" aria-label="主导航"><a class="nav-features" href="#features">认识软件</a><a class="nav-download" href="#download">下载 Windows 版 <span aria-hidden="true">↗</span></a></nav>
+    <nav class="nav" aria-label="主导航"><a class="nav-features" href="#features">认识软件</a><a class="nav-download" href="#download">下载 Windows 版 <span aria-hidden="true">↗</span></a><a class="nav-github" href="https://github.com/irisnb/next-story">GitHub <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
@@ -294,6 +323,7 @@
           <p class="lead motion-fade">在写作空间里亲手写，<br>AI 面板随时陪你想。</p>
           <div class="actions motion-fade"><a class="button" href="https://github.com/irisnb/next-story/releases/latest/download/NextStory-setup.exe" aria-describedby="hero-release-note">下载 Windows 版<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></a><span class="release-note" id="hero-release-note">当前版本 v0.1.0</span></div>
           <p class="hero-features motion-fade" aria-label="亲手写、随时陪想，故事的判断权始终在你手里"><span>亲手写</span><span class="divider" aria-hidden="true">·</span><span>随时陪你想</span><span class="divider" aria-hidden="true">·</span><span>判断权在你手里</span></p>
+          <p class="hero-contact">开发者邮箱：<a href="mailto:2042569143@qq.com">2042569143@qq.com</a></p>
         </div>
       </div>
     </section>
@@ -321,7 +351,6 @@
       </div>
     </section>
 
-    <aside class="download-strip" aria-label="下载 Next Story"><div class="wrap"><p>从这里，开始你的故事。</p><div class="actions"><a class="button" href="https://github.com/irisnb/next-story/releases/latest/download/NextStory-setup.exe" aria-describedby="middle-release-note">下载 Windows 版<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></a><span class="release-note" id="middle-release-note">当前版本 v0.1.0</span></div></div></aside>
 
     <section class="chapter chapter-three" aria-labelledby="making-title">
       <div class="wrap chapter-grid">
@@ -352,10 +381,6 @@
             <p class="gallery-intro">写作与陪想，并列在眼前。</p>
             <div class="gallery-grid">
               <figure class="gallery-item">
-                <img src="assets/shot-welcome.png" alt="欢迎页：新建项目、打开项目" loading="lazy" />
-                <figcaption>从这里，进入你的项目。</figcaption>
-              </figure>
-              <figure class="gallery-item">
                 <img src="assets/shot-writing.png" alt="写作空间与 AI 面板：左侧内容树、中部稿纸编辑区、右侧陪想讨论" loading="lazy" />
                 <figcaption>亲手写作，随时陪想。</figcaption>
               </figure>
@@ -364,6 +389,45 @@
                 <figcaption>梳理陪想的要求与姿态。</figcaption>
               </figure>
             </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="developers" aria-label="给开发者">
+      <div class="wrap">
+        <details>
+          <summary class="gallery-toggle">给开发者</summary>
+          <div class="developers-content">
+        <div class="developers-heading reveal"><p class="eyebrow">它是什么，又是怎么做的</p><h2 id="developers-title"><span class="line-mask"><span class="line-content">给开发者</span></span></h2><p class="developers-intro" tabindex="0">Next Story 是一个 Tauri 架构下的 AI 辅助写作软件，主打及时获取 AI 帮助：你写你的，随时问 AI；它陪你想想，不替你写。</p></div>
+        <article class="developer-row reveal" aria-labelledby="developer-comparison">
+          <div class="developer-label"><h3 id="developer-comparison">和直接用 ChatGPT／Codex 比，省在哪</h3></div>
+          <div class="developer-body"><p>用 ChatGPT 或 Codex 看稿，你得手动搬运上下文：贴正文、交代背景、拿回回答再贴回去，每轮重复。Next Story 把这层全部自动化——AI 面板常驻写作空间，每轮请求自动附带关注文档的最新内容（含未保存草稿的校验快照），追问走增量、历史由常驻会话维护。省掉的不是一次复制粘贴，是每一轮。</p></div>
+        </article>
+        <article class="developer-row reveal" aria-labelledby="developer-architecture">
+          <div class="developer-label"><p class="eyebrow">01 /</p><h3 id="developer-architecture">怎么搭的</h3></div>
+          <div class="developer-body">
+            <p>三个进程，各司其职：</p>
+            <ul>
+              <li><code>Tauri</code> 桌面端：<code>React + TypeScript</code> 前端，<code>Tiptap</code> 编辑器内核</li>
+              <li><code>Rust</code> 后端：项目数据的唯一写入方——内容树、文档保存、校验、迁移、恢复</li>
+              <li><code>DSH</code>（<code>Node sidecar</code>）：AI 驱动进程，负责提示词组装、请求发送、流式接收与常驻会话</li>
+            </ul>
+            <p>边界只有一条：AI 侧对文稿只读，永远没有写权限。</p>
+            <h4>DSH 的核心</h4>
+            <p>常驻会话。对话历史在驱动进程内维护，追问只发送增量；每轮把现场材料——关注文档正文或校验快照、允许的目录投影、跨文档字面检索片段、选区——组装进提示词。材料不足时模型发起补读授权，经用户允许后以 <code>story-list / story-read / story-search</code> 三个只读工具按需取材，出处可查。进程独立于编辑器：意外退出自动重启，重放恢复所有在途讨论；它没有注册任何写文件能力，输出只到面板。</p>
+          </div>
+        </article>
+        <article class="developer-row reveal" aria-labelledby="developer-input">
+          <div class="developer-label"><p class="eyebrow">02 /</p><h3 id="developer-input">能干什么</h3></div>
+          <div class="developer-body">
+            <p>写作空间（富文本＋内容树）；常驻 AI 面板（流式回复、选区召唤）；制作模块（自定义提示词链路：固定底座＋要求卡＋风格卡，版本化启用）；导入导出（Word / PDF / Markdown / FDX）。</p>
+          </div>
+        </article>
+        <article class="developer-row reveal" aria-labelledby="developer-stack">
+          <div class="developer-label"><p class="eyebrow">03 /</p><h3 id="developer-stack">用了什么</h3></div>
+          <div class="developer-body"><p><code>Tauri 2</code> · <code>React + TypeScript</code> · <code>Tiptap</code> · <code>Rust</code> · <code>Node sidecar</code> · <code>OpenAI</code> 兼容接口（API 自配，不绑定服务商）。</p></div>
+        </article>
+        <div class="developer-body developer-evidence reveal"><p>规格驱动开发：79 份归档规格即行为说明书，源码导读从 <code>openspec/specs/</code> 开始。</p></div>
           </div>
         </details>
       </div>
@@ -378,7 +442,7 @@
       </div>
     </section>
   </main>
-  <footer class="footer"><div class="wrap footer-inner"><div><p>© 2026 irisnb · 版权所有（保留所有权利；可下载安装使用）</p><p>本软件按现状提供，不附担保</p></div></div></footer>
+  <footer class="footer"><div class="wrap footer-inner"><div><p>© 2026 irisnb · 版权所有（保留所有权利；可下载安装使用）</p><p>本软件按现状提供，不附担保</p></div><a class="footer-github" href="https://github.com/irisnb/next-story">GitHub ↗</a></div></footer>
   <script>
     (() => {
       const preference = matchMedia('(prefers-reduced-motion: reduce)');
