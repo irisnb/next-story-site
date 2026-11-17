@@ -1,0 +1,15 @@
+/* Drawer heading, width, spacing, marker and motion use the original gallery classes. */
+.film-drawer { border-bottom:0; }
+.film-drawer [hidden] { display:none !important; }
+.film-poster { width:100%; height:auto; }
+.film-drawer video { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; background:var(--ink); }
+.film-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px 20px; margin-top:20px; }
+.film-play { border:0; font:inherit; cursor:pointer; }
+.film-meta, #film-status, .film-caption { color:var(--gray-3); font-size:14px; }
+.film-caption { margin-top:12px; }
+.film-text-button { min-height:44px; padding:8px 0; background:none; border:0; color:var(--ink); font:inherit; text-decoration:underline; text-underline-offset:6px; cursor:pointer; }
+.film-text-button:hover { color:var(--accent-hover); }
+.film-drawer button:focus-visible,.film-drawer video:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.film-error { display:flex; align-items:center; flex-wrap:wrap; gap:8px 20px; margin-top:12px; font-size:14px; }
+.film-error a { display:inline-flex; align-items:center; min-height:44px; }
+@media (max-width:700px) { .film-actions { gap:8px 16px; margin-top:16px; } }
